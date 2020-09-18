@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum EnemyState
 {
@@ -13,14 +11,15 @@ public enum EnemyState
 public class EnemyStateMachine : MonoBehaviour
 {
     public EnemyState state;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
+    public float speed;
+
+    public float chargeTime = 3;
+
+    private bool shouldChangeDirection;
+
+    public Transform playerTransform;
+
     void Update()
     {
         switch (state)
@@ -28,25 +27,55 @@ public class EnemyStateMachine : MonoBehaviour
             case EnemyState.Inactive:
                 // Entry (none)
                 // Do (none)
-                // Exit (handled by event call)
+                // Exit (handled by EnableEnemy)
                 break;
             case EnemyState.Targeting:
-                // Entry
+                // Entry (handled in EnableEnemy)
                 // Do
-                // Exit
+                MoveToPlayer();
+                // Exit (handled by function call from collider script)
                 break;
             case EnemyState.Charging:
                 // Entry
                 // Do
+                MoveAwayFromPlayer();
                 // Exit
                 break;
             case EnemyState.Dead:
             default:
                 // Entry
+                Destroy(this);
                 // Do
                 // Exit
                 break;
         }
+    }
+
+    void MoveToPlayer()
+    {
+        Vector3 movement = transform.position - playerTransform.position;
+        movement.Normalize();
+        movement *= speed;
+        transform.Translate(movement);
+    }
+    // One of these scripts should change the order of the first line
+    void MoveAwayFromPlayer()
+    {
+        Vector3 movement = transform.position - playerTransform.position;
+        movement.Normalize();
+        movement *= speed;
+        transform.Translate(movement);
+    }
+
+    void TargetPlayerAfterCharge()
+    {
+        state = EnemyState.Targeting;
+    }
+
+    void ChargeAfterPlayerHit()
+    {
+        state = EnemyState.Charging;
+        Invoke("TargetPlayerAfterCharge", chargeTime);
     }
 
     void OnEnable() {
@@ -64,4 +93,10 @@ public class EnemyStateMachine : MonoBehaviour
             state = EnemyState.Targeting;
         }
     }
+
+    public void Kill()
+    {
+        state = EnemyState.Dead;
+    }
+
 }

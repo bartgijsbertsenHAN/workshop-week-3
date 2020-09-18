@@ -50,10 +50,18 @@ public class EnemyStateMachine : MonoBehaviour
     }
 
     void OnEnable() {
-        
+        EnemyStartEventManager.onEnable += EnableEnemy;
     }
 
     void OnDisable() {
-        
+        EnemyStartEventManager.onEnable -= EnableEnemy;
+    }
+
+    void EnableEnemy()
+    {
+        if (state == EnemyState.Inactive)
+        {
+            state = EnemyState.Targeting;
+        }
     }
 }

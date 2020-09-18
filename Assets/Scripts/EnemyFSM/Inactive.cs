@@ -2,17 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inactive : MonoBehaviour
+public class Inactive : IState
 {
-    // Start is called before the first frame update
-    void Start()
+    void doAction(Context context)
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
